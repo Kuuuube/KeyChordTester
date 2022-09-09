@@ -21,6 +21,9 @@ namespace KeyChordTester
     {
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
+        private const int WM_KEYUP = 0x0101;
+        private const int WM_SYSKEYDOWN = 0x0104;
+        private const int WM_SYSKEYUP = 0x0105;
         private static LowLevelKeyboardProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
 
@@ -53,7 +56,25 @@ namespace KeyChordTester
             {
                 int vkCode = Marshal.ReadInt32(lParam);
                 int time = Marshal.ReadInt32(lParam + 12);
-                Console.WriteLine($"Key: {(Keys)vkCode} - Stamp: {time}");
+                Console.WriteLine($"Key: {(Keys)vkCode} - Stamp: {time} KEYDOWN");
+            }
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYUP)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                int time = Marshal.ReadInt32(lParam + 12);
+                Console.WriteLine($"Key: {(Keys)vkCode} - Stamp: {time} KEYUP");
+            }
+            if (nCode >= 0 && wParam == (IntPtr)WM_SYSKEYDOWN)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                int time = Marshal.ReadInt32(lParam + 12);
+                Console.WriteLine($"Key: {(Keys)vkCode} - Stamp: {time} SYSKEYDOWN");
+            }
+            if (nCode >= 0 && wParam == (IntPtr)WM_SYSKEYUP)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                int time = Marshal.ReadInt32(lParam + 12);
+                Console.WriteLine($"Key: {(Keys)vkCode} - Stamp: {time} SYSKEYUP");
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
